@@ -39,14 +39,14 @@ public class Consultoria {
     }
 
     public void contratar(Desenvolvedor desenvolvedor) {
-        if (desenvolvedores.size() < vagas) {
+        if (desenvolvedor != null && desenvolvedores.size() < vagas) {
             desenvolvedores.add(desenvolvedor);
         }
     }
 
     public void contratarFullstack(DesenvolvedorWeb desenvolvedor) {
         if (desenvolvedor.isFullstack()) {
-            desenvolvedores.add(desenvolvedor);
+            contratar(desenvolvedor);
         }
     }
 
@@ -86,29 +86,15 @@ public class Consultoria {
     public List<Desenvolvedor> buscarPorTecnologia(String tecnologia) {
         List<Desenvolvedor> listaRetorno = new ArrayList<>();
 
-        for (Desenvolvedor devDaVez : desenvolvedores) {
-            if (devDaVez instanceof DesenvolvedorMobile) {
-                if (((DesenvolvedorMobile) devDaVez).getLinguagem().equalsIgnoreCase(tecnologia)) {
-                    listaRetorno.add(devDaVez);
-                }
-                if (((DesenvolvedorMobile) devDaVez).getPlataforma().equalsIgnoreCase(tecnologia)) {
-                    listaRetorno.add(devDaVez);
-                }
-            }
-            if (devDaVez instanceof DesenvolvedorWeb) {
-               if (((DesenvolvedorWeb) devDaVez).getFrontend().equalsIgnoreCase(tecnologia)) {
-                   listaRetorno.add(devDaVez);
-               }
-               if (((DesenvolvedorWeb) devDaVez).getBackend().equalsIgnoreCase(tecnologia)) {
-                   listaRetorno.add(devDaVez);
-               }
-               if (((DesenvolvedorWeb) devDaVez).getSgbd().equalsIgnoreCase(tecnologia)) {
-                   listaRetorno.add(devDaVez);
-               }
-            }
-        }
-
-        return listaRetorno;
+        return this.desenvolvedores.stream()
+                .filter(devDaVez -> devDaVez instanceof DesenvolvedorMobile &&
+                        (((DesenvolvedorMobile) devDaVez).getPlataforma().equalsIgnoreCase(tecnologia) ||
+                                ((DesenvolvedorMobile) devDaVez).getLinguagem().equalsIgnoreCase(tecnologia)) ||
+                        devDaVez instanceof DesenvolvedorWeb &&
+                        (((DesenvolvedorWeb) devDaVez).getSgbd().equalsIgnoreCase(tecnologia) ||
+                                ((DesenvolvedorWeb) devDaVez).getBackend().equalsIgnoreCase(tecnologia) ||
+                                ((DesenvolvedorWeb) devDaVez).getFrontend().equalsIgnoreCase(tecnologia)))
+                .toList();
 
     }
 
